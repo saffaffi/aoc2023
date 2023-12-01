@@ -1,6 +1,4 @@
-use std::error::Error;
-use std::fmt::Display;
-use std::str::FromStr;
+use std::{error::Error, fmt::Display, str::FromStr};
 
 /// A valid day number of advent (i.e. an integer in range 1 to 25).
 ///

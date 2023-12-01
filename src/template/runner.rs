@@ -1,13 +1,16 @@
+use std::{
+    cmp, env,
+    fmt::Display,
+    io::{stdout, Write},
+    process,
+    process::Output,
+    time::{Duration, Instant},
+};
+
+use super::ANSI_BOLD;
 /// Encapsulates code that interacts with solution functions.
 use crate::template::{aoc_cli, ANSI_ITALIC, ANSI_RESET};
 use crate::Day;
-use std::fmt::Display;
-use std::io::{stdout, Write};
-use std::process::Output;
-use std::time::{Duration, Instant};
-use std::{cmp, env, process};
-
-use super::ANSI_BOLD;
 
 pub fn run_part<I: Clone, T: Display>(func: impl Fn(I) -> Option<T>, input: I, day: Day, part: u8) {
     let part_str = format!("Part {part}");
@@ -158,7 +161,10 @@ fn submit_result<T: Display>(
     }
 
     if aoc_cli::check().is_err() {
-        eprintln!("command \"aoc\" not found or not callable. Try running \"cargo install aoc-cli\" to install it.");
+        eprintln!(
+            "command \"aoc\" not found or not callable. Try running \"cargo install aoc-cli\" to \
+             install it."
+        );
         process::exit(1);
     }
 
