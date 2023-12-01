@@ -9,7 +9,6 @@ target/
 # MSVC Windows builds of rustc generate these, which store debugging information
 *.pdb
 
-
 # Added by cargo
 
 /target
@@ -21,3 +20,7 @@ data/inputs/*
 !data/inputs/.keep
 data/puzzles/*
 !data/puzzles/.keep
+
+# Outputs of `nix build` and `nix run`
+/result
+/result-bin
