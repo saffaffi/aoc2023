@@ -1,0 +1,20 @@
+name: Update README ⭐️ progress
+
+on: push
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    if: ${{ vars.AOC_ENABLED == 'true' }}
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: k2bd/advent-readme-stars@v1
+        with:
+          userId: ${{ secrets.AOC_USER_ID }}
+          sessionCookie: ${{ secrets.AOC_SESSION }}
+          year: ${{ secrets.AOC_YEAR }}
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Update README ⭐️ progress"
