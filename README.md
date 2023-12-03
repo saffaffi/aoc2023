@@ -16,6 +16,16 @@ Spöttel](https://github.com/fspoettel).
 <!--- advent_readme_stars table --->
 
 <!--- benchmarking table --->
+## Benchmarks
+
+| Day | Part 1 | Part 2 |
+| :---: | :---: | :---:  |
+| [Day 1](./src/bin/01.rs) | `48.6µs` | `555.7µs` |
+| [Day 2](./src/bin/02.rs) | `41.5µs` | `38.5µs` |
+| [Day 3](./src/bin/03.rs) | `446.8µs` | `423.7µs` |
+
+**Total: 1.55ms**
+<!--- benchmarking table --->
 
 ---
 
