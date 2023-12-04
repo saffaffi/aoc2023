@@ -8,41 +8,60 @@ struct Card {
 }
 
 impl Card {
-    fn score(self) -> u32 {
+    fn score(&self) -> u32 {
         self.have
-            .into_iter()
+            .iter()
             .filter(|have| self.winning.contains(have))
             .fold(None, |acc, _| acc.map(|old| old * 2).or(Some(1)))
             .unwrap_or(0)
     }
 }
 
-pub fn part_one(input: &str) -> Option<u32> {
-    Some(
-        input
-            .lines()
-            .map(|line| {
-                let (_, numbers) = line.split_once(": ").unwrap();
-                let (winning, have) = numbers.split_once(" | ").unwrap();
+fn parse_cards(input: &str) -> impl Iterator<Item = Card> + '_ {
+    input.lines().map(|line| {
+        let (_, numbers) = line.split_once(": ").unwrap();
+        let (winning, have) = numbers.split_once(" | ").unwrap();
 
-                let winning = winning
-                    .split_whitespace()
-                    .flat_map(u32::from_str)
-                    .collect::<HashSet<_>>();
-                let have = have
-                    .split_whitespace()
-                    .flat_map(u32::from_str)
-                    .collect::<Vec<_>>();
+        let winning = winning
+            .split_whitespace()
+            .flat_map(u32::from_str)
+            .collect::<HashSet<_>>();
+        let have = have
+            .split_whitespace()
+            .flat_map(u32::from_str)
+            .collect::<Vec<_>>();
 
-                Card { winning, have }
-            })
-            .map(Card::score)
-            .sum(),
-    )
+        Card { winning, have }
+    })
 }
 
-pub fn part_two(_input: &str) -> Option<u32> {
-    None
+pub fn part_one(input: &str) -> Option<u32> {
+    Some(parse_cards(input).map(|c| c.score()).sum())
+}
+
+impl Card {
+    fn matching(&self) -> usize {
+        self.have
+            .iter()
+            .filter(|&have| self.winning.contains(have))
+            .count()
+    }
+}
+
+pub fn part_two(input: &str) -> Option<u32> {
+    let num_cards = input.lines().count();
+    let mut copies = vec![1; num_cards];
+
+    for (i, card) in parse_cards(input).enumerate() {
+        let matching = card.matching();
+        let i_copies = copies[i];
+
+        for c in &mut copies[(i + 1)..((i + 1 + matching).min(num_cards))] {
+            *c += i_copies;
+        }
+    }
+
+    Some(copies.into_iter().sum())
 }
 
 #[cfg(test)]
@@ -56,9 +75,8 @@ mod tests {
     }
 
     #[test]
-    #[ignore]
     fn test_part_two() {
         let result = part_two(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, None);
+        assert_eq!(result, Some(30));
     }
 }
