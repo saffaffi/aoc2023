@@ -39,8 +39,42 @@ pub fn part_one(input: &str) -> Option<u32> {
     )
 }
 
-pub fn part_two(_input: &str) -> Option<u32> {
-    None
+fn race(input: &str) -> (u64, u64) {
+    let mut lines = input.lines();
+    let time = lines
+        .next()
+        .unwrap()
+        .split_whitespace()
+        .skip(1)
+        .collect::<Vec<_>>()
+        .join("")
+        .parse::<u64>()
+        .unwrap();
+    let distance = lines
+        .next()
+        .unwrap()
+        .split_whitespace()
+        .skip(1)
+        .collect::<Vec<_>>()
+        .join("")
+        .parse::<u64>()
+        .unwrap();
+    (time, distance)
+}
+
+pub fn part_two(input: &str) -> Option<u32> {
+    let (total_time, record_distance) = race(input);
+
+    Some(
+        (0..=total_time)
+            .filter(move |button_time| {
+                let speed = button_time;
+                let moving_time = total_time - button_time;
+                let distance = speed * moving_time;
+                distance > record_distance
+            })
+            .count() as u32,
+    )
 }
 
 #[cfg(test)]
