@@ -158,8 +158,145 @@ pub fn part_one(input: &str) -> Option<u32> {
     )
 }
 
-pub fn part_two(_input: &str) -> Option<u32> {
-    None
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+enum JokedHand {
+    HighCard,
+    Pair,
+    TwoPair,
+    Trips,
+    Boat,
+    Quads,
+    Five,
+}
+
+impl From<[Card; 5]> for JokedHand {
+    fn from(cards: [Card; 5]) -> Self {
+        let mut freq = HashMap::<Card, usize>::new();
+        let mut jokers = 0;
+        for card in cards {
+            if card == Card::Jack {
+                jokers += 1;
+            } else {
+                *freq.entry(card).or_default() += 1;
+            }
+        }
+
+        if freq.is_empty() {
+            freq.insert(Card::Jack, jokers);
+        } else {
+            *freq.values_mut().max().unwrap() += jokers;
+        }
+
+        let mut freq_vals = freq.values().copied().collect::<Vec<_>>();
+        freq_vals.sort();
+        let freq_vals = &*freq_vals;
+
+        if freq_vals.len() == 1 {
+            JokedHand::Five
+        } else if freq_vals == [1, 4] {
+            JokedHand::Quads
+        } else if freq_vals == [2, 3] {
+            JokedHand::Boat
+        } else if freq_vals == [1, 1, 3] {
+            JokedHand::Trips
+        } else if freq_vals == [1, 2, 2] {
+            JokedHand::TwoPair
+        } else if freq_vals == [1, 1, 1, 2] {
+            JokedHand::Pair
+        } else {
+            JokedHand::HighCard
+        }
+    }
+}
+
+#[derive(Debug)]
+struct JokedTurn {
+    cards: [Card; 5],
+    bid: u32,
+}
+
+impl JokedTurn {
+    fn new(cards: [Card; 5], bid: u32) -> Self {
+        Self { cards, bid }
+    }
+}
+
+impl PartialEq for JokedTurn {
+    fn eq(&self, other: &Self) -> bool {
+        (0..5).all(|i| {
+            self.cards[i] == Card::Jack
+                || other.cards[i] == Card::Jack
+                || self.cards[i] == other.cards[i]
+        })
+    }
+}
+
+impl Eq for JokedTurn {}
+
+impl Ord for JokedTurn {
+    fn cmp(&self, other: &Self) -> Ordering {
+        let this_hand: JokedHand = self.cards.into();
+        let other_hand: JokedHand = other.cards.into();
+
+        match this_hand.cmp(&other_hand) {
+            Ordering::Less => Ordering::Less,
+            Ordering::Greater => Ordering::Greater,
+            Ordering::Equal => {
+                for pair in self.cards.iter().copied().zip(other.cards.iter().copied()) {
+                    match pair {
+                        (ours, theirs) if ours == theirs => {
+                            // equal
+                            continue;
+                        }
+                        (Card::Jack, _) => {
+                            return Ordering::Less;
+                        }
+                        (_, Card::Jack) => {
+                            return Ordering::Greater;
+                        }
+                        (ours, theirs) => {
+                            return ours.cmp(&theirs);
+                        }
+                    }
+                }
+                panic!("hands are equal!!!")
+            }
+        }
+    }
+}
+
+impl PartialOrd for JokedTurn {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+pub fn part_two(input: &str) -> Option<u32> {
+    let mut turns = input
+        .lines()
+        .map(|line| {
+            let (cards_raw, bid_raw) = line.split_once(' ').unwrap();
+            let cards = cards_raw
+                .chars()
+                .map(Card::from)
+                .collect::<Vec<_>>()
+                .try_into()
+                .unwrap();
+            let bid = bid_raw.parse::<u32>().unwrap();
+            JokedTurn::new(cards, bid)
+        })
+        .collect::<Vec<_>>();
+
+    turns.sort();
+    let highest_rank = turns.len() as u32;
+
+    Some(
+        turns
+            .into_iter()
+            .zip(1..=highest_rank)
+            .map(|(turn, rank)| turn.bid * rank)
+            .sum(),
+    )
 }
 
 #[cfg(test)]
@@ -175,6 +312,6 @@ mod tests {
     #[test]
     fn test_part_two() {
         let result = part_two(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, None);
+        assert_eq!(result, Some(5905));
     }
 }

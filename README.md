@@ -24,15 +24,15 @@ Spöttel](https://github.com/fspoettel).
 
 | Day | Part 1 | Part 2 |
 | :---: | :---: | :---:  |
-| [Day 1](./src/bin/01.rs) | `44.0µs` | `570.5µs` |
-| [Day 2](./src/bin/02.rs) | `40.8µs` | `37.7µs` |
-| [Day 3](./src/bin/03.rs) | `435.8µs` | `425.7µs` |
-| [Day 4](./src/bin/04.rs) | `200.8µs` | `200.1µs` |
-| [Day 5](./src/bin/05.rs) | `18.8µs` | `48.4µs` |
-| [Day 6](./src/bin/06.rs) | `353.0ns` | `12.8ms` |
-| [Day 7](./src/bin/07.rs) | `3.1ms` | `-` |
+| [Day 1](./src/bin/01.rs) | `46.6µs` | `564.1µs` |
+| [Day 2](./src/bin/02.rs) | `39.5µs` | `37.8µs` |
+| [Day 3](./src/bin/03.rs) | `436.2µs` | `423.8µs` |
+| [Day 4](./src/bin/04.rs) | `196.1µs` | `185.5µs` |
+| [Day 5](./src/bin/05.rs) | `18.3µs` | `47.9µs` |
+| [Day 6](./src/bin/06.rs) | `368.0ns` | `12.5ms` |
+| [Day 7](./src/bin/07.rs) | `3.0ms` | `2.8ms` |
 
-**Total: 17.92ms**
+**Total: 20.30ms**
 <!--- benchmarking table --->
 
 ---
